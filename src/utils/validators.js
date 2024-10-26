@@ -1,20 +1,30 @@
-export function validateSingularOrPlural(params, singularName, pluralName) {
-    const singular = params[singularName];
-    const plural = params[pluralName];
+import { leagues, seasons } from "./constants.js";
 
-    // Check if at least one is provided
-    if (!singular && !plural) {
-        throw new Error(`Either ${singularName} or ${pluralName} must be provided`);
+function validateParams(params) {
+    if (!params?.league) {
+        throw new Error(`The 'league' parameter is required.`)
+    }
+    if (!params?.season) {
+        throw new Error(`The 'season' parameter is required.`)
     }
 
-    // Check if both are provided
-    if (singular && plural) {
-        throw new Error(`Cannot provide both ${singularName} and ${pluralName}`);
+    if (params?.cols && !Array.isArray(params.cols)) {
+        throw new Error(`Wrong input for 'cols'. Must be an array object.`)
     }
+
+    if (!leagues.includes(params.league)) {
+        throw new Error(`Wrong input for 'league', or the league '${params.league}' is not yet supported.` +
+            ` Allowed parameters are: [${leagues.map(league => `'${league}'`).join(', ')}].`
+        )
+    }
+
+    if (!seasons.includes(params.season)) {
+        throw new Error(`Wrong input for 'season', or the season '${params.season}' is not yet supported.` +
+            ` Allowed parameters are: [${seasons.map(season => `'${season}'`).join(', ')}].`
+        )
+    }
+
+    return params;
 }
 
-// You could also create a specific football validator
-export function validateFootballParams({ league, leagues, season, seasons }) {
-    validateSingularOrPlural({ league, leagues }, 'league', 'leagues');
-    validateSingularOrPlural({ season, seasons }, 'season', 'seasons');
-}
+export { validateParams };

@@ -15,8 +15,10 @@ async function getHtml(url) {
 }
 
 // Build league season url
-function buildLeagueSeasonUrl(index, season) {
+function buildLeagueUrl(params) {
+    const index = leagueToIndex[params.league];
+    const season = params.season;
     return `https://fbref.com/en/comps/${index}/${season}`;
 }
 
-export { getHtml, buildLeagueSeasonUrl };
+export { getHtml, buildLeagueUrl };
