@@ -1,107 +1,52 @@
 import { buildLeagueUrl } from '../utils/helpers.js';
-import {
-    parseLeagueStandings,
-    parseHomeAwayStandings,
-    parseSquadStandardStats,
-    parseSquadStandardStatsAgainst,
-    parseSquadGoalkeepingStats,
-    parseSquadGoalkeepingStatsAgainst,
-} from '../utils/parsers.js';
+import { TableParser } from '../utils/parsers.js'
 import { fetchTableData } from './fetcher.js';
 import { validateParams } from '../utils/validators.js';
+import { TableType } from '../utils/types.js';
 
 
 class FbrefClient {
+    #parser;
 
-    constructor() { };
+    constructor() {
+        this.#parser = new TableParser();
+    };
 
-    // Get league standings table
+
+    // Private Fetch table method
+    async #fetchTable(params, tableType) {
+        const validatedParams = validateParams(params);
+        return fetchTableData({
+            params: validatedParams,
+            urlBuilder: buildLeagueUrl,
+            parser: (html, params) => this.#parser.parse(html, params, tableType)
+        })
+    }
+
     async getLeagueStandings(params) {
-        const {
-            league,
-            season,
-            cols,
-        } = validateParams(params);
-
-        return fetchTableData({
-            params: { league, season, cols },
-            urlBuilder: buildLeagueUrl,
-            parser: parseLeagueStandings,
-        });
+        return this.#fetchTable(params, TableType.OVERALL_STANDINGS);
     }
 
-    // Get home/away standings
     async getHomeAwayStandings(params) {
-        const {
-            league,
-            season,
-            cols,
-        } = validateParams(params);
-
-        return fetchTableData({
-            params: { league, season, cols },
-            urlBuilder: buildLeagueUrl,
-            parser: parseHomeAwayStandings,
-        });
+        return this.#fetchTable(params, TableType.HOME_AWAY_STANDINGS);
     }
 
-    // Get Squad Standard Stats (for)
     async getSquadStandardStats(params) {
-        const {
-            league,
-            season,
-            cols,
-        } = validateParams(params);
-
-        return fetchTableData({
-            params: { league, season, cols },
-            urlBuilder: buildLeagueUrl,
-            parser: parseSquadStandardStats,
-        })
+        return this.#fetchTable(params, TableType.SQUAD_STATS.STANDARD.FOR);
     }
 
-    // Get Squad Standard Stats (against)
     async getSquadStandardStatsAgainst(params) {
-        const {
-            league,
-            season,
-            cols,
-        } = validateParams(params);
-
-        return fetchTableData({
-            params: { league, season, cols },
-            urlBuilder: buildLeagueUrl,
-            parser: parseSquadStandardStatsAgainst,
-        });
+        return this.#fetchTable(params, TableType.SQUAD_STATS.STANDARD.AGAINST);
     }
 
-    // Get Squad Goalkeeping Stats (for)
     async getSquadGoalkeepingStats(params) {
-        const {
-            league,
-            season,
-            cols,
-        } = validateParams(params);
-        return fetchTableData({
-            params: { league, season, cols },
-            urlBuilder: buildLeagueUrl,
-            parser: parseSquadGoalkeepingStats,
-        });
+        return this.#fetchTable(params, TableType.SQUAD_STATS.GOALKEEPING.FOR);
     }
 
-    // Get Squad Goalkeeping Stats (against)
     async getSquadGoalkeepingStatsAgainst(params) {
-        const {
-            league,
-            season,
-            cols,
-        } = validateParams(params);
-        return fetchTableData({
-            params: { league, season, cols },
-            urlBuilder: buildLeagueUrl,
-            parser: parseSquadGoalkeepingStatsAgainst,
-        })
+        return this.#fetchTable(params, TableType.SQUAD_STATS.GOALKEEPING.AGAINST);
     }
+
     // Get Squad Advanced Goalkeeping Stats (for)
 
     // Get Squad Advanced Goalkeeping Stats (against)

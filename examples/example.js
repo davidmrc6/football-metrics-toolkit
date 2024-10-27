@@ -5,7 +5,7 @@ const client = new FbrefClient();
 async function getLeagueStandingsExample() {
     const table = await client.getLeagueStandings({
         league: 'premier-league',
-        season: '2024-2025',
+        season: '1888-1889',
         cols: ['team', 'games', 'wins', 'ties', 'losses', 'points', 'attendance_per_g'],
     })
         .then((data) => console.log(data))
@@ -60,9 +60,9 @@ async function getSquadGoalkeepingStatsAgainstExample() {
 
 
 
-getLeagueStandingsExample();
-// getHomeAwayStandingsExample();
+// getLeagueStandingsExample();
+getHomeAwayStandingsExample();
 // getSquadStandardStatsExample();
 // getSquadStandardStatsAgainstExample();
 // getSquadGoalkeepingStatsExample();
-//getSquadGoalkeepingStatsAgainstExample();
+// getSquadGoalkeepingStatsAgainstExample();

@@ -1,5 +1,7 @@
 # Fbref Scraper for Football Data
 Simple web scraper which scrapes and parses football data from the website fbref.com.
+\\
+This project is still ongoing, with more features coming soon.
 
 ## Installation
 

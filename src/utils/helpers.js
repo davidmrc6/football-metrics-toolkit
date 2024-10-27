@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { setupCache, buildMemoryStorage } from 'axios-cache-interceptor';
-import { leagueToIndex } from './maps.js'
 
 // Cached axios object
 const cachedAxios = setupCache(axios, {
@@ -16,9 +15,7 @@ async function getHtml(url) {
 
 // Build league season url
 function buildLeagueUrl(params) {
-    const index = leagueToIndex[params.league];
-    const season = params.season;
-    return `https://fbref.com/en/comps/${index}/${season}`;
+    return `https://fbref.com/en/comps/${params.leagueIndex}/${params.season}`;
 }
 
 export { getHtml, buildLeagueUrl };
