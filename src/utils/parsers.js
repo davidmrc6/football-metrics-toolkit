@@ -28,6 +28,13 @@ export class TableParser {
             if (dataStat) columns.add(dataStat);
         });
 
+        // If columns object is empty, throw an error
+        if (columns.size === 0) {
+            throw new Error('No columns found in table. Please check your parameters.\n' +
+                'Or, data is probably not available for the given parameters.'
+            );
+        }
+
         return Array.from(columns);
     }
 
@@ -67,8 +74,13 @@ export class TableParser {
     }
 
     #findCell($, element, col) {
-        return $(element).find(`td[data-stat="${col}"]`)
-            || $(element).find(`th[data-stat="${col}"]`);
+        const thCell = $(element).find(`th[data-stat="${col}"]`);
+        if (thCell.length > 0) return thCell;
+
+        const tdCell = $(element).find(`td[data-stat="${col}"]`);
+        if (tdCell.length > 0) return tdCell;
+
+        return $();
     }
 
     #validateTableData(table) {

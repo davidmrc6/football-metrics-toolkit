@@ -58,11 +58,20 @@ async function getSquadGoalkeepingStatsAgainstExample() {
         .catch((error) => console.error(error));
 }
 
-
+async function getSquadDefensiveActionsExample() {
+    const table = await client.getSquadDefensiveActions({
+        league: 'ligue-2',
+        season: '2000-2001',
+        cols: ['team', 'players_used', 'tackles_won']
+    })
+        .then((data) => console.log(data))
+        .catch((error) => console.error(error));
+}
 
 // getLeagueStandingsExample();
-getHomeAwayStandingsExample();
+// getHomeAwayStandingsExample();
 // getSquadStandardStatsExample();
 // getSquadStandardStatsAgainstExample();
 // getSquadGoalkeepingStatsExample();
 // getSquadGoalkeepingStatsAgainstExample();
+getSquadDefensiveActionsExample();

@@ -22,6 +22,78 @@ export const TableType = {
                 selector: '#stats_squads_keeper_against > tbody > tr'
             }
         },
+        ADVANCED_GOALKEEPING: {
+            FOR: {
+                selector: '#stats_squads_keeper_adv_for > tbody > tr'
+            },
+            AGAINST: {
+                selector: '#stats_squads_keeper_adv_against > tbody > tr'
+            }
+        },
+        SHOOTING: {
+            FOR: {
+                selector: '#stats_squads_shooting_for > tbody > tr'
+            },
+            AGAINST: {
+                selector: '#stats_squads_shooting_against > tbody > tr'
+            }
+        },
+        PASSING: {
+            FOR: {
+                selector: '#stats_squads_passing_for > tbody > tr'
+            },
+            AGAINST: {
+                selector: '#stats_squads_passing_against > tbody > tr'
+            }
+        },
+        PASS_TYPES: {
+            FOR: {
+                selector: '#stats_squads_passing_types_for > tbody > tr'
+            },
+            AGAINST: {
+                selector: '#stats_squads_passing_types_against > tbody > tr'
+            }
+        },
+        GOAL_AND_SHOT_CREATION: {
+            FOR: {
+                selector: '#stats_squads_gca_for > tbody > tr'
+            },
+            AGAINST: {
+                selector: '#stats_squads_gca_against > tbody > tr'
+            }
+        },
+        DEFENSIVE_ACTIONS: {
+            FOR: {
+                selector: '#stats_squads_defense_for > tbody > tr'
+            },
+            AGAINST: {
+                selector: '#stats_squads_defense_against > tbody > tr'
+            }
+        },
+        POSSESSION: {
+            FOR: {
+                selector: '#stats_squads_possession_for > tbody > tr'
+            },
+            AGAINST: {
+                selector: '#stats_squads_possession_against > tbody > tr'
+            }
+        },
+        PLAYING_TIME: {
+            FOR: {
+                selector: '#stats_squads_playing_time_for > tbody > tr'
+            },
+            AGAINST: {
+                selector: '#stats_squads_playing_time_against > tbody > tr'
+            }
+        },
+        MISCELLANEOUS: {
+            FOR: {
+                selector: '#stats_squads_misc_for > tbody > tr'
+            },
+            AGAINST: {
+                selector: 'stats_squads_misc_against > tbody > tr'
+            }
+        }
     },
 };
 
