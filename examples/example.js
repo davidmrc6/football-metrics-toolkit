@@ -52,6 +52,7 @@ async function getSquadGoalkeepingStatsAgainstExample() {
     const table = await client.getSquadGoalkeepingStatsAgainst({
         league: 'ligue-1',
         season: '2023-2024',
+        //cols: ['team', 'gk_saves']
     })
         .then((data) => console.log(data))
         .catch((error) => console.error(error));
@@ -59,9 +60,9 @@ async function getSquadGoalkeepingStatsAgainstExample() {
 
 
 
-// getLeagueStandingsExample();
+getLeagueStandingsExample();
 // getHomeAwayStandingsExample();
 // getSquadStandardStatsExample();
 // getSquadStandardStatsAgainstExample();
 // getSquadGoalkeepingStatsExample();
-getSquadGoalkeepingStatsAgainstExample();
+//getSquadGoalkeepingStatsAgainstExample();

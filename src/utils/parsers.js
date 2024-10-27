@@ -1,12 +1,6 @@
 import * as cheerio from 'cheerio';
 import { leagueToIndex } from './maps.js';
 import {
-    DefaultGoalkeepingStats,
-    DefaultLeagueCols,
-    DefaultLeagueHomeAwayCols,
-    DefaultStandardStats
-} from './types.js';
-import {
     squadGoalkeepingStats,
     squadGoalkeepingStatsAgainst,
     squadStandardStats,
@@ -14,13 +8,24 @@ import {
 } from './constants.js';
 
 
-function abstractParser(html, params, defaultCols, tableIndex) {
+function abstractParser(html, params, tableIndex) {
     const $ = cheerio.load(html);
     const rows = $(tableIndex);
     const table = [];
 
+    // Get all available columns from the table headers
+    const availableColumns = getAvailableColumns($, tableIndex);
+
+    // If user has specified columns, validate they exist in the table
+    if (params.cols) {
+        validateUserColumns(params.cols, availableColumns);
+    }
+
+    // Use either user-specified columns or all available columns
+    const columnsToParse = params.cols || availableColumns;
+
     rows.each((_, element) => {
-        const row = parseRow($, element, params.cols, defaultCols);
+        const row = parseRow($, element, columnsToParse);
         if (Object.keys(row).length > 0) {
             table.push(row);
         }
@@ -30,15 +35,39 @@ function abstractParser(html, params, defaultCols, tableIndex) {
     return table;
 }
 
+function getAvailableColumns($, tableIndex) {
+    const columns = new Set();
 
-function parseRow($, element, cols, defaultCols) {
+    const tableContainer = tableIndex.split('>')[0].trim();
+
+    $(`${tableContainer} th[data-stat], ${tableContainer} td[data-stat]`).each((_, element) => {
+        const dataStat = $(element).attr('data-stat');
+        if (dataStat) {
+            columns.add(dataStat);
+        }
+    });
+    return Array.from(columns);
+}
+
+function validateUserColumns(userCols, availableColumns) {
+    const invalidColumns = userCols.filter(col => !availableColumns.includes(col));
+    if (invalidColumns.length > 0) {
+        throw new Error(
+            `The following columns were requested but don't exist in the table: ${invalidColumns.join(', ')}\n` +
+            `Available columns are: ${availableColumns.join(', ')}`
+        );
+    }
+}
+
+
+function parseRow($, element, cols) {
     const row = {};
 
     cols.forEach(col => {
-        validateColumn(col, defaultCols);
         const cell = findCell($, element, col);
-        validateCell(cell, col);
-        row[col] = cell.text().trim();
+        if (cell.length > 0) {
+            row[col] = cell.text().trim();
+        }
     });
 
     return row;
@@ -51,24 +80,6 @@ function findCell($, element, col) {
 
     return tdCell.length > 0 ? tdCell : thCell;
 }
-
-
-function validateColumn(col, defaultCols) {
-    if (!defaultCols.includes(col)) {
-        throw new Error(`Unknown column mapping for: ${col}`);
-    }
-}
-
-
-function validateCell(cell, col) {
-    if (cell.length === 0) {
-        throw new Error(
-            `Could not find column with data stat ${col}. ` +
-            'Please verify the column exists in the table.'
-        );
-    }
-}
-
 
 function validateTableData(table) {
     if (table.length === 0) {
@@ -93,7 +104,6 @@ function parseLeagueStandings(html, params) {
     return abstractParser(
         html,
         params,
-        DefaultLeagueCols,
         buildTableSelector(params, 'overall')
     );
 }
@@ -103,7 +113,6 @@ function parseHomeAwayStandings(html, params) {
     return abstractParser(
         html,
         params,
-        DefaultLeagueHomeAwayCols,
         buildTableSelector(params, 'home_away')
     );
 }
@@ -113,8 +122,7 @@ function parseSquadStandardStats(html, params) {
     return abstractParser(
         html,
         params,
-        DefaultStandardStats,
-        squadStandardStats
+        squadStandardStats,
     );
 }
 
@@ -123,7 +131,6 @@ function parseSquadStandardStatsAgainst(html, params) {
     return abstractParser(
         html,
         params,
-        DefaultStandardStats,
         squadStandardStatsAgainst,
     )
 }
@@ -132,7 +139,6 @@ function parseSquadGoalkeepingStats(html, params) {
     return abstractParser(
         html,
         params,
-        DefaultGoalkeepingStats,
         squadGoalkeepingStats,
     )
 }
@@ -141,7 +147,6 @@ function parseSquadGoalkeepingStatsAgainst(html, params) {
     return abstractParser(
         html,
         params,
-        DefaultGoalkeepingStats,
         squadGoalkeepingStatsAgainst,
     )
 }

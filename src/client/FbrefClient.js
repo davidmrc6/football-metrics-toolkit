@@ -1,11 +1,5 @@
 import { buildLeagueUrl } from '../utils/helpers.js';
 import {
-    DefaultLeagueCols,
-    DefaultLeagueHomeAwayCols,
-    DefaultStandardStats,
-    DefaultGoalkeepingStats,
-} from '../utils/types.js';
-import {
     parseLeagueStandings,
     parseHomeAwayStandings,
     parseSquadStandardStats,
@@ -26,7 +20,7 @@ class FbrefClient {
         const {
             league,
             season,
-            cols = DefaultLeagueCols
+            cols,
         } = validateParams(params);
 
         return fetchTableData({
@@ -41,7 +35,7 @@ class FbrefClient {
         const {
             league,
             season,
-            cols = DefaultLeagueHomeAwayCols,
+            cols,
         } = validateParams(params);
 
         return fetchTableData({
@@ -56,7 +50,7 @@ class FbrefClient {
         const {
             league,
             season,
-            cols = DefaultStandardStats,
+            cols,
         } = validateParams(params);
 
         return fetchTableData({
@@ -71,7 +65,7 @@ class FbrefClient {
         const {
             league,
             season,
-            cols = DefaultStandardStats,
+            cols,
         } = validateParams(params);
 
         return fetchTableData({
@@ -86,7 +80,7 @@ class FbrefClient {
         const {
             league,
             season,
-            cols = DefaultGoalkeepingStats,
+            cols,
         } = validateParams(params);
         return fetchTableData({
             params: { league, season, cols },
@@ -100,7 +94,7 @@ class FbrefClient {
         const {
             league,
             season,
-            cols = DefaultGoalkeepingStats,
+            cols,
         } = validateParams(params);
         return fetchTableData({
             params: { league, season, cols },
