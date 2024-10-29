@@ -1,48 +1,81 @@
 import * as cheerio from 'cheerio';
+import { WarningHandler } from '../client/WarningHandler.js';
 
 class TableParser {
+    #warningHandler;
 
-    constructor() {
-        this.warnings = [];
+    constructor(options = {}) {
+        this.#warningHandler = new WarningHandler(options);
     }
-
-    #addWarning(message) {
-        this.warnings.push(message);
-        console.warn(`[TableParser] ${message}`);
-    }
-
-    getWarnings() {
-        return this.warnings;
-    }
-
-    clearWarnings() {
-        this.warnings = [];
-    }
-
-
-
-
 
     parse(html, params) {
-        this.clearWarnings(); // Move warning handler to a different file?
 
         const $ = cheerio.load(html);
         const tables = [];
-        const selectors = this.#getSelectors(params.tables, params);
+        let selectors;
 
-        const columnsToParse = params.cols ? params.cols : this.#getAvailableColumns($, selectors);
+        try {
+            selectors = this.#getSelectors(params.tables, params);
+        } catch (error) {
+            this.#warningHandler.warn('TableParser', `Failed to initialize selectors: ${error.message}`);
+            throw error;
+        }
+
+        const availableColumns = this.#getAvailableColumns($, selectors);
+        let columnsToParse;
+        try {
+            columnsToParse = params.cols
+                ? this.#validateCols(params.cols, availableColumns)
+                : availableColumns;
+        } catch (error) {
+            this.#warningHandler.warn('TableParser', `Failed to determine columns: ${error.message}`);
+        }
+
+        // Track progress
+        let processedTables = 0;
+        const totalTables = selectors.length;
 
         for (const selector of selectors) {
-            const table = this.#parseTable($, selector, columnsToParse);
-            this.#validateTableData(table);
-            tables.push(table);
+            try {
+                const table = this.#parseTable($, selector, columnsToParse);
+                this.#validateTableData(table);
+                tables.push(table);
+                processedTables++;
+
+                // Optional progress update
+                this.#warningHandler.warn(
+                    'TableParser',
+                    `Successfully processed table ${processedTables}/${totalTables}`
+                );
+            } catch (error) {
+                this.#warningHandler.warn(
+                    'TableParser',
+                    `Failed to parse table ${processedTables + 1}/${totalTables} with selector "${selector}": ${error.message}`
+                );
+            }
+        }
+
+        if (tables.length === 0) {
+            throw new Error('No valid tables were found to parse');
         }
 
         const combinedData = this.#combineTablesByTeam(tables);
 
         if (params.teams) {
-            return this.#filterDataByTeams(combinedData, params.teams);
+            try {
+                return this.#filterDataByTeams(combinedData, params.teams);
+            } catch (error) {
+                this.#warningHandler.warn('TableParser',
+                    `Team filtering failed: ${error.message}. Returning all available teams.`);
+                return combinedData;
+            }
         }
+
+        // Success message
+        this.#warningHandler.warn(
+            'TableParser',
+            `Processing complete. Successfully parsed ${tables.length}/${totalTables} tables.`
+        );
 
         return combinedData;
     }
@@ -56,7 +89,7 @@ class TableParser {
                     : tableType.selector;
                 selectors.push(selector);
             } catch (error) {
-                this.#addWarning(`Failed to get selector: ${error.message}`);
+                throw new Error(`Failed to get selector: ${error.message}`);
             }
         }
         return selectors;
@@ -100,7 +133,9 @@ class TableParser {
         const isAgainstTable = this.#isAgainstTable(selector);
 
         const finalColumns = isAgainstTable
-            ? columns.filter(col => col === 'team' || col.startsWith('against_')).map(col => col === 'team' ? col : col.replace(/^against_/, ""))
+            ? columns
+                .filter(col => col === 'team' || col.startsWith('against_'))
+                .map(col => col === 'team' ? col : col.replace(/^against_/, ""))
             : columns;
 
         $(selector).each((_, element) => {
@@ -117,6 +152,7 @@ class TableParser {
         return finalColumns.reduce((row, col, index) => {
             const column = finalColumns[index];
             const cell = this.#findCell($, element, column);
+
             if (cell.length > 0) {
                 let cellText = cell.text().trim();
                 if (isAgainstTable && column === 'team') {
@@ -143,6 +179,21 @@ class TableParser {
         if (table.length === 0) {
             throw new Error('No data found in table. Please check your parameters.');
         }
+    }
+
+    #validateCols(userColumns, availableColumns) {
+        const validCols = userColumns.filter(col => availableColumns.includes(col));
+        const invalidCols = userColumns.filter(col => !availableColumns.includes(col));
+
+        if (invalidCols.length > 0) {
+            this.#warningHandler.warn(
+                'TableParser',
+                `Invalid column(s): ${invalidCols.join(', ')}. ` +
+                `Skipping column and continuing execution.`
+            );
+        }
+
+        return validCols;
     }
 
     #combineTablesByTeam(tables) {
