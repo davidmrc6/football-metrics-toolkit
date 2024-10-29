@@ -5,6 +5,10 @@ export class TableParser {
         const $ = cheerio.load(html);
         const selector = this.#getSelector(tableType, params);
 
+        // IDEA: To be able to parse multiple tables, create array of selectors
+        // and loop through all selectors, getting and validating the table for all of them.
+        // Then, somehow link all the data together by team (for instance).
+
         const availableColumns = this.#getAvailableColumns($, selector);
         const columnsToParse = this.#validateAndGetColumns(params.cols, availableColumns);
         const table = this.#parseTable($, selector, columnsToParse);
@@ -30,7 +34,8 @@ export class TableParser {
 
         // If columns object is empty, throw an error
         if (columns.size === 0) {
-            throw new Error('No columns found in table. Please check your parameters.\n' +
+            throw new Error(
+                'No columns found in table. Please check your parameters.\n' +
                 'Or, data is probably not available for the given parameters.'
             );
         }

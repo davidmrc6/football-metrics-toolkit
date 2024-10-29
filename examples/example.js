@@ -68,10 +68,20 @@ async function getSquadDefensiveActionsExample() {
         .catch((error) => console.error(error));
 }
 
+// async function getComprehensiveStatExample() {
+//     const table = await client.getComprehensiveStats({
+//         league: 'premier-league',
+//         season: '2023-2024'
+//     })
+//         .then((data) => console.log(data))
+//         .catch((error) => console.error(error));
+// }
+
 // getLeagueStandingsExample();
 // getHomeAwayStandingsExample();
 // getSquadStandardStatsExample();
 // getSquadStandardStatsAgainstExample();
 // getSquadGoalkeepingStatsExample();
 // getSquadGoalkeepingStatsAgainstExample();
-getSquadDefensiveActionsExample();
+// getSquadDefensiveActionsExample();
+// getComprehensiveStatExample();

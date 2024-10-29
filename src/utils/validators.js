@@ -11,13 +11,13 @@ function validateParams(params) {
     }
 
     if (cols && !Array.isArray(params.cols)) {
-        throw new Error(`Wrong input for 'cols'. Must be an array object.`)
+        throw new Error(`Invalid input for 'cols'. Must be an array object.`)
     }
 
     // Validate league
     if (!Object.hasOwn(LEAGUE_TO_INDEX, league)) {
         const leagues = Object.keys(LEAGUE_TO_INDEX);
-        throw new Error(`Wrong input for 'league', or the league '${league}' is not yet supported.` +
+        throw new Error(`Invalid input for 'league', or the league '${league}' is not yet supported.` +
             ` Allowed parameters are: ${leagues.join(', ')}`
         )
     }
