@@ -97,10 +97,9 @@ class TableParser {
 
     #parseTable($, selector, columns) {
         const rows = [];
-        const isAgainstTable = this.#isAgainstTable(selector);
-
+        const isAgainstTable = this.#isAgainstTable;
         const finalColumns = isAgainstTable
-            ? columns.filter(col => col === 'team' || col.startsWith('against_')).map(col => col === 'team' ? col : col.replace(/^against_/, ""))
+            ? columns.map(col => col === 'team' ? col : col.replace(/^against_/, ""))
             : columns;
 
         $(selector).each((_, element) => {
@@ -119,12 +118,9 @@ class TableParser {
             const cell = this.#findCell($, element, column);
             if (cell.length > 0) {
                 let cellText = cell.text().trim();
-                if (isAgainstTable && column === 'team') {
+                if (isAgainstTable && originalCol === 'team') {
                     cellText = cellText.replace(/^vs\s+/i, '');
                 }
-                col = col !== 'team' && isAgainstTable
-                    ? `against_${col}`
-                    : col
                 row[col] = cellText;
             }
             return row;
@@ -182,6 +178,3 @@ class TableParser {
     }
 
 }
-
-
-export { TableParser };
