@@ -91,7 +91,7 @@ export const TableType = {
                 selector: '#stats_squads_misc_for > tbody > tr'
             },
             AGAINST: {
-                selector: 'stats_squads_misc_against > tbody > tr'
+                selector: '#stats_squads_misc_against > tbody > tr'
             }
         }
     },

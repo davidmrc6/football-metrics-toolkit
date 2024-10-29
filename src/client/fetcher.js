@@ -10,6 +10,7 @@ async function fetchTableData({
         const html = await getHtml(url);
         return parser(html, params);
     } catch (error) {
+        console.trace(error);
         throw new Error(`Failed to fetch table data: ${error.message}`);
     }
 }

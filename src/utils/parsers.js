@@ -1,20 +1,35 @@
 import * as cheerio from 'cheerio';
 
 export class TableParser {
-    parse(html, params, tableType) {
+    parse(html, params) {
         const $ = cheerio.load(html);
-        const selector = this.#getSelector(tableType, params);
 
-        // IDEA: To be able to parse multiple tables, create array of selectors
-        // and loop through all selectors, getting and validating the table for all of them.
-        // Then, somehow link all the data together by team (for instance).
+        const tables = [];
 
-        const availableColumns = this.#getAvailableColumns($, selector);
-        const columnsToParse = this.#validateAndGetColumns(params.cols, availableColumns);
-        const table = this.#parseTable($, selector, columnsToParse);
+        const selectors = []; // Array of selectors
+        for (const tableType of params.tables) {
 
-        this.#validateTableData(table);
-        return table;
+            const selector = this.#getSelector(tableType, params);
+            selectors.push(selector);
+        }
+
+        const availableColumns = [];
+
+        for (const selector of selectors) {
+            availableColumns.push(...this.#getAvailableColumns($, selector));
+        }
+
+        for (const selector of selectors) {
+            const columnsToParse = this.#validateAndGetColumns(params.cols, availableColumns);
+            const table = this.#parseTable($, selector, columnsToParse);
+
+            this.#validateTableData(table);
+
+            tables.push(table);
+        }
+
+        const combinedData = this.#combineTablesByTeam(tables);
+        return combinedData;
     }
 
     #getSelector(tableType, params) {
@@ -32,7 +47,7 @@ export class TableParser {
             if (dataStat) columns.add(dataStat);
         });
 
-        // If columns object is empty, throw an error
+
         if (columns.size === 0) {
             throw new Error(
                 'No columns found in table. Please check your parameters.\n' +
@@ -59,8 +74,15 @@ export class TableParser {
 
     #parseTable($, selector, columns) {
         const rows = [];
+        const isAgainstTable = this.#isAgainstTable(selector);
+
+        // If it's an "AGAINST" table, modify column names
+        const finalColumns = isAgainstTable
+            ? columns.map(col => col === 'team' ? col : `against_${col}`)
+            : columns;
+
         $(selector).each((_, element) => {
-            const row = this.#parseRow($, element, columns);
+            const row = this.#parseRow($, element, finalColumns, columns, isAgainstTable);
             if (Object.keys(row).length > 0) {
                 rows.push(row);
             }
@@ -68,11 +90,20 @@ export class TableParser {
         return rows;
     }
 
-    #parseRow($, element, columns) {
-        return columns.reduce((row, col) => {
-            const cell = this.#findCell($, element, col);
+    #parseRow($, element, finalColumns, originalColumns, isAgainstTable) {
+        return finalColumns.reduce((row, col, index) => {
+            const originalCol = originalColumns[index];
+            const cell = this.#findCell($, element, originalCol);
+
             if (cell.length > 0) {
-                row[col] = cell.text().trim();
+                let cellText = cell.text().trim();
+
+                if (isAgainstTable && originalCol === 'team') {
+                    // Remove "vs " prefix
+                    cellText = cellText.replace(/^vs\s+/i, '');
+                }
+
+                row[col] = cellText;
             }
             return row;
         }, {});
@@ -92,5 +123,35 @@ export class TableParser {
         if (table.length === 0) {
             throw new Error('No data found in table. Please check your parameters.');
         }
+    }
+
+    #isAgainstTable(selector) {
+        return (
+            selector &&
+            typeof selector === 'string' &&
+            selector.toLowerCase().includes('against')
+        );
+    }
+
+    #combineTablesByTeam(tables) {
+        const combinedData = {};
+
+        tables.forEach(table => {
+            table.forEach(row => {
+                const teamName = row.team;
+
+                if (!teamName) return;
+
+                if (!combinedData[teamName]) combinedData[teamName] = {};
+
+                Object.entries(row).forEach(([key, value]) => {
+                    if (key !== 'team') {
+                        combinedData[teamName][key] = value;
+                    }
+                });
+            });
+        });
+
+        return combinedData;
     }
 }
