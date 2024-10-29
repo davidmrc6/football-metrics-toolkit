@@ -2,7 +2,7 @@ import { LEAGUE_TO_INDEX } from "./types.js";
 import { TableType } from "./types.js";
 
 function validateParams(params) {
-    const { league, season, table, tables, cols } = params;
+    const { league, season, team, teams, table, tables, cols } = params;
 
     // Basic required params validation
     if (!league) {
@@ -40,6 +40,20 @@ function validateParams(params) {
         }
     }
 
+    let normalizedTeams;
+    if (team && teams) {
+        throw new Error(`Cannot provide both 'team' and 'teams' parameters. Use either one.`);
+    } else if (team) {
+        normalizedTeams = [team];
+    } else if (teams) {
+        if (!Array.isArray(teams)) {
+            throw new Error(`Invalid input for 'teams'. Must be an array of team names.`);
+        }
+        normalizedTeams = teams;
+    } else {
+        normalizedTeams = null;
+    }
+
     // Validate cols parameter
     if (cols && !Array.isArray(cols)) {
         throw new Error(`Invalid input for 'cols'. Must be an array object.`);
@@ -71,6 +85,7 @@ function validateParams(params) {
         league,
         leagueIndex: LEAGUE_TO_INDEX[league],
         season,
+        teams: normalizedTeams,
         tables: normalizedTables,
         cols,
     };
