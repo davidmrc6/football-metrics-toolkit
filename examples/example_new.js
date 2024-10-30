@@ -15,14 +15,12 @@ const client = new FootballMetricsClient();
 
 // Example 2: Fetch multiple tables
 const multiTable = await client.fetchTable({
-    league: 'ligue-1',
+    league: 'premier-league',
     season: '2024-2025', // Idea: accept 'current' as param
     tables: [
         TableType.SQUAD_STATS.ADVANCED_GOALKEEPING.FOR,
         TableType.SQUAD_STATS.ADVANCED_GOALKEEPING.AGAINST
-    ],
-    teams: ['Lille'],
-    cols: ['team', 'gk_psxg_net_per90', 'against_gk_psxg_net_per90'],
+    ]
 })
 
 console.log(multiTable);
