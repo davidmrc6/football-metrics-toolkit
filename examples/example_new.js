@@ -1,7 +1,7 @@
-import FbrefClient from '../src/client/FbrefClient.js';
+import FootballMetricsClient from '../src/client/FootballMetricsClient.js';
 import { TableType } from '../src/utils/types.js';
 
-const client = new FbrefClient();
+const client = new FootballMetricsClient();
 
 // Example 1: Fetch only one table
 // const table = await client.fetchTable({
@@ -18,13 +18,10 @@ const multiTable = await client.fetchTable({
     league: 'ligue-1',
     season: '2024-2025', // Idea: accept 'current' as param
     tables: [
-        TableType.OVERALL_STANDINGS,
-        TableType.SQUAD_STATS.STANDARD.FOR,
-        TableType.SQUAD_STATS.ADVANCED_GOALKEEPING.FOR,
         TableType.SQUAD_STATS.ADVANCED_GOALKEEPING.AGAINST
     ],
     teams: ['Paris S-G', 'Lille', 'Le Havre'],
-    cols: ['team', 'wins', 'ties', 'xg_for', 'goals_against1', 'npxg_xg_assist_per90', 'gk_psxg_net_per90', 'against_gk_psxg_net_per90'],
+    cols: ['team', 'against_gk_psxg_net_per90'],
 })
 
 console.log(multiTable);
