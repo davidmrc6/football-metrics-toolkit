@@ -1,6 +1,6 @@
 # Football Metrics Toolkit
 A Node.js library for collecting football statistics data. This tool provides a simple and flexible API to fetch and parse football statistics from Fbref.
-\\
+<br />
 This project is still ongoing active development. More features like player data, international competitions, and more are coming soon.
 
 ### :warning: Important notice

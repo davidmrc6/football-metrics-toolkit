@@ -5,13 +5,7 @@ const client = new FootballMetricsClient();
 const data = await client.fetchTable({
     league: 'premier-league',
     season: '2020-2021',
-    tables: [
-        TableType.SQUAD_STATS.MISCELLANEOUS.AGAINST,
-    ],
-    team: 'Arsenal'
+    cols: ['team', 'away_xg_against', 'xg_against']
 })
 
 console.log(data);
-
-// const csv = convertToCSV(data);
-// await saveToCSV(csv);

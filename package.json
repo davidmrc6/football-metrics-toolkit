@@ -1,7 +1,7 @@
 {
   "name": "football-metrics-toolkit",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Node.js library for collecting football statistics data. This tool provides a simple and flexible API to fetch and parse football statistics from Fbref.",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
