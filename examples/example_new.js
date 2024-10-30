@@ -18,10 +18,11 @@ const multiTable = await client.fetchTable({
     league: 'ligue-1',
     season: '2024-2025', // Idea: accept 'current' as param
     tables: [
+        TableType.SQUAD_STATS.ADVANCED_GOALKEEPING.FOR,
         TableType.SQUAD_STATS.ADVANCED_GOALKEEPING.AGAINST
     ],
-    teams: ['Paris S-G', 'Lille', 'Le Havre'],
-    cols: ['team', 'against_gk_psxg_net_per90'],
+    teams: ['Lille'],
+    cols: ['team', 'gk_psxg_net_per90', 'against_gk_psxg_net_per90'],
 })
 
 console.log(multiTable);

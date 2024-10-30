@@ -41,7 +41,6 @@ class TableParser {
         }
 
         const availableColumns = this.#getAvailableColumns($, selectors);
-        console.log(availableColumns);
         let columnsToParse;
         try {
             columnsToParse = params.cols
