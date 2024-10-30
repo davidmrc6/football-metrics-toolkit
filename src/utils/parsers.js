@@ -154,6 +154,7 @@ class TableParser {
 
         for (const selector of selectors) {
             const containerSelector = selector.split('>')[0].trim();
+
             $(`${containerSelector} [data-stat]`).each((_, element) => {
                 const dataStat = $(element).attr('data-stat');
                 if (dataStat) {
