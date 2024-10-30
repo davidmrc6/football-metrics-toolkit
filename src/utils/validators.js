@@ -16,7 +16,7 @@ function validateParams(params) {
 
     const normalizedTables = validateAndNormalizeTables(table, tables);
     const normalizedTeams = validateAndNormalizeTeams(team, teams);
-    validateCols(cols);
+    const normalizedCols = validateAndNormalizeCols(cols);
 
     return {
         league,
@@ -24,7 +24,7 @@ function validateParams(params) {
         season,
         teams: normalizedTeams,
         tables: normalizedTables,
-        cols,
+        cols: normalizedCols,
     };
 }
 
@@ -218,10 +218,21 @@ function validateTeamsArray(teams) {
  * @param {Array} cols - The input to validate.
  * @throws {Error} Throws an error if the input is not an array.
  */
-function validateCols(cols) {
+function validateAndNormalizeCols(cols) {
     if (cols && !Array.isArray(cols)) {
         throw new Error(`Invalid input for 'cols'. Must be an array object.`);
     }
+
+    if (cols && !cols.includes('team')) {
+        cols.push('team');
+        return cols;
+    }
+
+    if (cols) {
+        return cols;
+    }
+
+    return null;
 }
 
 /**

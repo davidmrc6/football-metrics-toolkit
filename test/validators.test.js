@@ -170,7 +170,7 @@ describe('validateParams', () => {
                 season: '2023-2024',
                 tables: [{ selector: 'full-table' }],
                 teams: null,
-                cols: undefined
+                cols: null
             });
         });
 

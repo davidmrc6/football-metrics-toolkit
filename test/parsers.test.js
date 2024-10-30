@@ -53,7 +53,7 @@ describe('TableParser', () => {
     let parser;
 
     beforeEach(() => {
-        parser = new TableParser({ console: true });
+        parser = new TableParser({ console: false });
     });
 
     describe('Basic Parsing', () => {

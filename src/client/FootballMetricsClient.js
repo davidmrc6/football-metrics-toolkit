@@ -63,4 +63,4 @@ class FootballMetricsClient {
 
 }
 
-export default FootballMetricsClient;
+export { FootballMetricsClient };
