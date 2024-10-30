@@ -17,17 +17,17 @@ function convertToCSV(data) {
 }
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 function saveToCSV(csvData, filename = 'data.csv') {
+    const currentDir = process.cwd();
 
-    const filePath = path.join(__dirname, filename);
+    const filePath = path.join(currentDir, filename);
 
     fs.writeFile(filePath, csvData, 'utf8', (err) => {
         if (err) {
             throw new Error('Error writing CSV file:', err);
         } else {
-            console.log(`CSV file saved as ${filename}`);
+            console.log(`CSV file saved as ${filename} in ${currentDir}`);
         }
     });
 }

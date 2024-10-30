@@ -26,7 +26,7 @@ npm install football-metrics-toolkit
 ## Quick Start
 To import the `FootballMetricsClient` and make a query, follow the example provided below:
 ```javascript
-import { FootballMetricsClient } from 'football-metrics-toolkit';
+import { FootballMetricsClient, TableType } from 'football-metrics-toolkit';
 
 const client = new FootballMetricsClient();
 
@@ -80,6 +80,39 @@ await saveToCSV(csv, 'football.csv');
 ```
 
 ## API Reference
+### `FootballStatsClient`
+The main class for interacting with the API.
+#### Methods
+##### `fetchTable(options)`
+Fetches and parses table data based on the provided options.
+Parameters:
+- `options` (Object):
+    - `league` (string): League identifier (e.g. 'ligue-1', 'premier-league'). A list of supported league identifiers can be found [here](leagues.md).
+    - `season` (string): Season identifier (e.g. '2023-2024').
+    - `table`(TableType, optional) or `tables` (Array of TableType, optional): Array of specific table(s) to fetch. If left empty, all available tables will be fetched. A list of TableType definitions can be found [here](tabletypes.md).
+    - `team` (string, optional) or `teams` (Array of string, optional): Array of specific team names to fetch. If left empty, all teams in the given `league` will be fetched.
+    - `cols` (Array, optional): Array of column identifiers to include. If left empty, all available columns in the given `tables` will be fetched.
+
+Returns: Promise\<Object\>: The fetched and parsed data.
+
+#### Table Types
+Available table types are organized in categories:
+```javascript
+TableType.OVERALL_STANDINGS
+TableType.HOME_STANDINGS
+TableType.AWAY_STANDINGS
+TableType.SQUAD_STATS.STANDARD.FOR
+TableType.SQUAD_STATS.STANDARD.AGAINST
+TableType.SQUAD_STATS.GOALKEEPING.FOR
+TableType.SQUAD_STATS.GOALKEEPING.AGAINST
+// ... and more
+```
+More comprehensive documentation on table types, as well as the columns that they return, can be found [here](tabletypes.md).
+
+#### Rate Limiting
+To comply with FBref's terms of service and avoid overwhelming their servers, this package implements rate limiting:
+
+- Maximum 20 requests per minute
 
 
 
@@ -93,3 +126,4 @@ This package is not affiliated with, endorsed by, or in any way officially conne
 Data provided by FBref.com and Sports Reference LLC. All data usage must comply with their Terms of Use.
 
 ## Notes
+This project is still under active development, so it might still be a bit unstable. Unaccounted for errors can still happen, and they will be fixed eventually. More features are also coming soon.
