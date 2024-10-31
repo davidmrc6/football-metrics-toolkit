@@ -73,7 +73,7 @@ Expected response:
 ```
 You can also convert the output to CSV format and save it to a `.csv` file:
 ```javascript
-import { converToCSV, saveToCSV } from 'football-metrics-toolkit';
+import { convertToCSV, saveToCSV } from 'football-metrics-toolkit';
 
 const csv = convertToCSV(data);
 await saveToCSV(csv, 'football.csv');
